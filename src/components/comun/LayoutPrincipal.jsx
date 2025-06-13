@@ -95,7 +95,8 @@ function LayoutPrincipal() {
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <PersonIcon sx={{ mr: 1, color: '#00e5ff' }} />
           <Typography variant="body2">
-            {usuario.email} ({usuario.rol})
+          {usuario ? `${usuario.email} (${usuario.rol})` : 'Cargando...'}
+           {/* {usuario.email} ({usuario.rol})*/}
           </Typography>
         </Box>
         <Button
