@@ -18,12 +18,29 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          // Intenta obtener los datos del usuario o verificar el token
-          // Si tienes un endpoint para obtener el usuario autenticado, úsalo.
-          // Por ahora, asumimos que si hay un token, el usuario está "logueado" con su rol.
-          // En una aplicación real, harías una llamada a /api/auth/me o similar.
-          const userData = JSON.parse(localStorage.getItem('usuarioData')) || { rol: 'empleado' }; // Obtener rol de datos guardados
-          setUsuario(userData);
+          let userData = null;
+          const storedUserData = localStorage.getItem('usuarioData');
+          if (storedUserData) {
+            userData = JSON.parse(storedUserData);
+          }
+  
+          // Si userData aún es null o no tiene la propiedad email (o cualquier otra esperada),
+          // podrías asignarle valores por defecto o una estructura vacía.
+          // Lo ideal es llamar a un endpoint de tu backend tipo /auth/me que devuelva los datos completos del usuario
+          // si el token es válido.
+          if (userData && userData.email) { // Asegúrate de que tiene un email
+              setUsuario(userData);
+          } else {
+              // Esto significa que hay un token, pero los datos de usuario no están completos.
+              // Considera hacer una llamada al backend aquí para obtener el usuario completo.
+              // Por ahora, para evitar el error 'email', podrías poner un objeto con email null/undefined
+              // o limpiar el token si los datos son inválidos.
+              console.warn('Token presente pero datos de usuario incompletos en localStorage.');
+              localStorage.removeItem('token');
+              localStorage.removeItem('usuarioData');
+              setUsuario(null); // No hay datos válidos de usuario
+          }
+  
         } catch (error) {
           console.error('Error al verificar autenticación:', error);
           localStorage.removeItem('token');
